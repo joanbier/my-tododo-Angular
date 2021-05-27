@@ -1,0 +1,80 @@
+<div class="container mt-5">
+  <nav class="row">
+    <div class="nav-wrapper">
+      <span class="brand-logo center">{{config?.title}}</span>
+    </div>
+  </nav>
+  <div class="content">
+    <div class="row">
+      <ng-container *ngIf='editMode; then editOn; else editOff'></ng-container>
+<ng-template #editOff>
+   <button  class="btn col s2 offset-s10" (click)='switchEditMode()'>Dodaj zadanie
+      </button>
+</ng-template>
+   <ng-template  #editOn>
+  <button class="btn col s2 offset-s10" (click)='switchEditMode()'>Zakończ
+      </button>
+   </ng-template>
+    
+
+    </div>
+
+    <div class="row" *ngIf='editMode'>
+      <input 
+        class="col s8" 
+        type="text" 
+        placeholder="Dodaj zadanie i datę wykonania"
+        [(ngModel)]="taskName"/>
+  
+      <input
+      class="col s2 disabled" 
+      type="date"
+      [(ngModel)]="taskDate"
+      />
+   
+      <button 
+      [disabled]='taskName=== "" || taskDate=== "" '
+      (click)="createTask()"
+      class="btn-floating">+
+      </button>
+    </div>
+
+    <ul class="collection" *ngIf='tasks.length>0; else noTasks'>
+      <ng-container *ngFor='let task of tasks; let i=index' [ngSwitch]="task.done">
+      <li class="collection-item row" *ngSwitchCase="false">
+          <span class="col s10">
+           {{i+1}}) {{task.name}} zrobić do {{task.deadline | date : "d.MM EEEE" : "" : 'pl'}}
+          </span>
+        <div class="col s2 right-align">
+          <button (click)='removeTask(task)' class="btn-floating btn-small red mr-5">
+            <i class="material-icons">remove</i>
+          </button>
+          <button (click)='markTaskAsDone(task)' class="btn-floating btn-small green">
+            <i class="material-icons">check</i>
+          </button>
+        </div>
+      </li>
+        <li class="collection-item row" *ngSwitchCase="true">
+        <span class="col done">{{task.name}}</span>
+      </li>
+      </ng-container >
+    </ul>
+
+
+  <ng-template #noTasks>
+    <h1>Dzisiaj brak zadań :-)</h1>
+  </ng-template>
+
+
+
+    <button [disabled]='tasks.length===0' class="btn red" (click)='clearTasks()'>
+      Wyczyść
+    </button>
+  </div>
+
+  <footer class="page-footer mt-5">
+    <div class="footer-copyright">
+      <div class="container">{{config?.date | date:'yyyy'}}{{config?.footer}}</div>
+    </div>
+  </footer>
+</div>
